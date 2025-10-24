@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Generate Favicon</title>
+</head>
+<body>
+    <h2>Generating favicon...</h2>
+    <canvas id="canvas" width="64" height="64"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const size = 64;
+        
+        // Background gradient
+        const gradient = ctx.createLinearGradient(0, 0, size, size);
+        gradient.addColorStop(0, '#2C3E50');
+        gradient.addColorStop(1, '#1A252F');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, size, size);
+        
+        // Hotel building
+        const hotelWidth = 30;
+        const hotelHeight = 38;
+        const hotelX = 17;
+        const hotelY = 10;
+        
+        ctx.fillStyle = '#C9966B';
+        ctx.fillRect(hotelX, hotelY, hotelWidth, hotelHeight);
+        
+        // Windows - 3 columns, 3 rows
+        ctx.fillStyle = '#2C3E50';
+        const windowSize = 5;
+        const windowSpacing = 3;
+        
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                const wx = hotelX + 4 + col * (windowSize + windowSpacing);
+                const wy = hotelY + 4 + row * (windowSize + windowSpacing);
+                ctx.fillRect(wx, wy, windowSize, windowSize);
+            }
+        }
+        
+        // Door
+        const doorWidth = 8;
+        const doorHeight = 10;
+        const doorX = hotelX + (hotelWidth - doorWidth) / 2;
+        const doorY = hotelY + hotelHeight - doorHeight;
+        ctx.fillRect(doorX, doorY, doorWidth, doorHeight);
+        
+        // MDF Text
+        ctx.fillStyle = '#C9966B';
+        ctx.font = 'bold 12px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('MDF', size / 2, size - 6);
+        
+        // Border
+        ctx.strokeStyle = '#C9966B';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(1, 1, size - 2, size - 2);
+        
+        // Auto download
+        canvas.toBlob(function(blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'favicon.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            document.body.innerHTML = '<h2>✅ favicon.png downloaded!</h2><p>Save it to your project folder and refresh your portfolio.</p>';
+        });
+    </script>
+</body>
+</html>
+

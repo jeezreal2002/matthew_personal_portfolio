@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favicon Generator - MDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        canvas {
+            border: 2px solid #2C3E50;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        h1 {
+            color: #2C3E50;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #C9966B;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #2C3E50;
+            transform: translateY(-2px);
+        }
+        .preview {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .preview-item {
+            text-align: center;
+        }
+        .preview-item canvas {
+            display: block;
+            margin: 0 auto 10px;
+        }
+        .instructions {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: left;
+            max-width: 600px;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏨 MDF Favicon Generator</h1>
+        <p>Professional favicon for Matthew D. Fermil's portfolio</p>
+        
+        <div class="preview">
+            <div class="preview-item">
+                <canvas id="favicon16" width="16" height="16"></canvas>
+                <small>16x16</small>
+            </div>
+            <div class="preview-item">
+                <canvas id="favicon32" width="32" height="32"></canvas>
+                <small>32x32</small>
+            </div>
+            <div class="preview-item">
+                <canvas id="favicon64" width="64" height="64"></canvas>
+                <small>64x64 (Preview)</small>
+            </div>
+        </div>
+        
+        <button onclick="downloadFavicon()">📥 Download favicon.ico</button>
+        <button onclick="downloadPNG()">📥 Download PNG (32x32)</button>
+        
+        <div class="instructions">
+            <h3>📋 How to Use:</h3>
+            <ol>
+                <li>Click "Download favicon.ico" button above</li>
+                <li>Save the file to your project folder</li>
+                <li>The favicon is already linked in your HTML</li>
+                <li>Refresh your browser to see the new icon</li>
+            </ol>
+            <p><strong>Note:</strong> You may need to clear browser cache to see the new favicon immediately.</p>
+        </div>
+    </div>
+
+    <script>
+        function drawFavicon(canvas) {
+            const ctx = canvas.getContext('2d');
+            const size = canvas.width;
+            const scale = size / 32; // Base design on 32x32
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#2C3E50');
+            gradient.addColorStop(1, '#1A252F');
+            
+            // Draw rounded rectangle background
+            const radius = size * 0.15;
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.roundRect(0, 0, size, size, radius);
+            ctx.fill();
+            
+            // Draw hotel icon (simplified)
+            const hotelWidth = size * 0.5;
+            const hotelHeight = size * 0.6;
+            const hotelX = (size - hotelWidth) / 2;
+            const hotelY = size * 0.2;
+            
+            // Hotel building
+            ctx.fillStyle = '#C9966B';
+            ctx.fillRect(hotelX, hotelY, hotelWidth, hotelHeight);
+            
+            // Windows (3x3 grid)
+            ctx.fillStyle = '#2C3E50';
+            const windowSize = hotelWidth * 0.15;
+            const windowSpacing = hotelWidth * 0.075;
+            
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 3; col++) {
+                    if (row < 2) { // Only 2 rows of windows
+                        const wx = hotelX + windowSpacing + col * (windowSize + windowSpacing);
+                        const wy = hotelY + windowSpacing + row * (windowSize + windowSpacing);
+                        ctx.fillRect(wx, wy, windowSize, windowSize);
+                    }
+                }
+            }
+            
+            // Door at bottom center
+            const doorWidth = hotelWidth * 0.25;
+            const doorHeight = hotelHeight * 0.25;
+            const doorX = hotelX + (hotelWidth - doorWidth) / 2;
+            const doorY = hotelY + hotelHeight - doorHeight;
+            ctx.fillRect(doorX, doorY, doorWidth, doorHeight);
+            
+            // Add MDF text if size is large enough
+            if (size >= 32) {
+                ctx.fillStyle = '#C9966B';
+                ctx.font = `bold ${size * 0.25}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText('MDF', size / 2, size - size * 0.05);
+            }
+            
+            // Add border
+            ctx.strokeStyle = '#C9966B';
+            ctx.lineWidth = Math.max(1, size * 0.04);
+            ctx.beginPath();
+            ctx.roundRect(ctx.lineWidth / 2, ctx.lineWidth / 2, size - ctx.lineWidth, size - ctx.lineWidth, radius);
+            ctx.stroke();
+        }
+        
+        // Draw all sizes
+        drawFavicon(document.getElementById('favicon16'));
+        drawFavicon(document.getElementById('favicon32'));
+        drawFavicon(document.getElementById('favicon64'));
+        
+        function downloadPNG() {
+            const canvas = document.getElementById('favicon32');
+            const link = document.createElement('a');
+            link.download = 'favicon-32x32.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        function downloadFavicon() {
+            // Create a temporary canvas for 32x32 (most common favicon size)
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            drawFavicon(canvas);
+            
+            // Convert to data URL
+            const link = document.createElement('a');
+            link.download = 'favicon.ico';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            alert('✅ Favicon downloaded!\n\nNote: The file is downloaded as PNG format. For best results:\n1. Rename it to "favicon.ico"\n2. Place it in your project root folder\n3. Or use an online ICO converter for true .ico format');
+        }
+    </script>
+</body>
+</html>
+
